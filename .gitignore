@@ -1,0 +1,8 @@
+.DS_Store
+node_modules
+npm-debug.log
+.vscode
+.coveralls.yml
+test/coverage/*
+dist/build.js
+dist/build.js.map

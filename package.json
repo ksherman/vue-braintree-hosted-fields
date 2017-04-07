@@ -1,0 +1,20 @@
+{
+  "name": "vue-braintree-hosted-fields",
+  "version": "0.1.0",
+  "description": "Braintree v3 Hosted Fields Component for VueJS",
+  "main": "dist/build.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "vue",
+    "braintree",
+    "hosted-fields",
+    "credit-card"
+  ],
+  "author": "Kevin D Sherman",
+  "license": "MIT",
+  "dependencies": {
+    "braintree-web": "^3.11.0"
+  },
+}
