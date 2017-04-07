@@ -13,8 +13,12 @@
     "credit-card"
   ],
   "author": "Kevin D Sherman",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ksherman/vue-braintree-hosted-fields"
+  },
   "license": "MIT",
   "dependencies": {
     "braintree-web": "^3.11.0"
-  },
+  }
 }
