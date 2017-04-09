@@ -16,7 +16,6 @@
       </label>
       </div>
 
-      <button type="submit" style="padding-top: 1rem;" disabled id="submitTransaction" @click="tokenizeHF">TOKENIZE</button>
     </div>
 
   </div>
@@ -37,6 +36,10 @@
     },
     created() {
       this.createBT();
+
+      this.$parent.$on('tokenize', () => {
+        this.tokenizeHF();
+      });
     },
     data () {
       return {
@@ -98,8 +101,7 @@
             this.$emit('bthferror', this.errorMessage);
             return;
           } else {
-            //enable submit button
-            document.querySelector('#submitTransaction').removeAttribute('disabled');
+            this.$emit('bthfready');
             this.hostedFieldsInstance = hostedFieldsInstance;
           }
 
