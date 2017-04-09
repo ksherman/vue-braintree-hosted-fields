@@ -47,7 +47,7 @@
       }
     },
     methods: {
-      createBT() {
+      createBT () {
         var client = require('braintree-web/client');
         client.create({
           authorization: this.authToken
@@ -62,7 +62,7 @@
           }
         });
       },
-      createHF() {
+      createHF () {
         var hostedFields = require('braintree-web/hosted-fields');
         hostedFields.create({
           client: this.clientInstance,
@@ -105,7 +105,7 @@
 
         });
       },
-      tokenizeHF() {
+      tokenizeHF () {
         this.hostedFieldsInstance.tokenize( (tokenizeErr, payload) => {
           if (tokenizeErr) {
             this.errorMessage = 'There was an error tokenizing! Message: ' + tokenizeErr.message;
@@ -119,7 +119,7 @@
 
         });
       },
-      teardownHF() {
+      teardownHF () {
         this.hostedFieldsInstance.teardown( (teardownErr) => {
             if (teardownErr) {
               this.errorMessage = 'There was an error tearing it down! Message: ' + teardownErr.message;

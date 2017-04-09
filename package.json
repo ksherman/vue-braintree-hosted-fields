@@ -1,11 +1,8 @@
 {
   "name": "vue-braintree-hosted-fields",
-  "version": "0.1.1",
+  "version": "0.1.4",
   "description": "Braintree v3 Hosted Fields Component for VueJS",
-  "main": "dist/build.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "hostedFields.vue",
   "keywords": [
     "vue",
     "braintree",
