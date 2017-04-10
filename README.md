@@ -12,12 +12,10 @@ Published on NPM. Includes `braintree-web` as a dependency.
 
 ```npm install vue-braintree-hosted-fields --save```
 
-##### Parent Component Needs
-
-** Import **
+###### Import
 `import HostedFields from 'vue-braintree-hosted-fields'`
 
-** Methods **
+###### Methods
 Since the component broadcasts and/or receives events, you'll need a few methods for that. First is a method that receives the error messaged emitted by the component. This is useful when there are any issues setting up or tokenizing payment information. Then, you'll need to $emit an event to trigger the fields tokenization. Lastly, another method is needed for receiving the tokenization payload (which includes the nonce). From there, the rest is on your integration to choose how to handle sending information to your server side. For example:
 
 ```
@@ -36,7 +34,7 @@ Since the component broadcasts and/or receives events, you'll need a few methods
   }
 ```
 
-** Styles **
+###### Styles
 Using `label` and `.input-field`:
 
 ```
@@ -74,12 +72,17 @@ Using `label` and `.input-field`:
 </style>
 ```
 
-##### Example Root Vue Component
+##### Example Parent Vue Component
 
 ```
 <template>
   <div>
-    <hosted-fields wrapperClass="constrain" authToken="sandbox_c8xxxxxb_qxxxxxxxxxxxxxxj" v-on:bthferror="btHFError" v-on:bthfpayload="btHFPayload"></hosted-fields>
+    <hosted-fields
+    	wrapperClass="constrain"
+    	authToken="sandbox_c8xxxxxb_qxxxxxxxxxxxxxxj"
+    	v-on:bthferror="btHFError"
+    	v-on:bthfpayload="btHFPayload"
+    ></hosted-fields>
 
     <button @click="submitTransaction">Submit</button>
   </div>
