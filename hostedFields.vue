@@ -1,19 +1,34 @@
 <template>
   <div :class="wrapperClass">
 
+    <div v-show="!hostedFieldsInstance" class="loader" id="loader-1"></div>
+
     <div v-show="hostedFieldsInstance">
-      <label for="card-number">Card Number
-        <div class="input-field" id="number"></div>
-      </label>
+      
+      <div class="line" v-if="collectCardHolderName">
+        <label for="cardholder">Card Holder
+          <input type="text" class="input-field" id="cardholder" name="cardholder" placeholder="Name">
+        </label>
+      </div>
 
       <div class="line">
-      <label for="cvv">CVV
-        <div class="input-field" id="cvv"></div>
-      </label>
+        <label for="card-number">Card Number
+          <div class="input-field" id="number"></div>
+        </label>
 
-      <label for="expiration-date">Expiration Date
-        <div class="input-field" id="expiration-date"></div>
-      </label>
+        <label for="postal" v-if="collectPostalCode">Postal Code
+          <input type="text" class="input-field" id="postal" name="postal" placeholder="11111">
+        </label>
+      </div>
+
+      <div class="line">
+        <label for="cvv">CVV
+          <div class="input-field" id="cvv"></div>
+        </label>
+
+        <label for="expiration-date">Expiration Date
+          <div class="input-field" id="expiration-date"></div>
+        </label>
       </div>
 
     </div>
@@ -25,13 +40,25 @@
   export default {
     props: {
       authToken: {
-        value: String
+        value: String,
       },
       wrapperClass: {
         value: String,
       },
       loaderClass: {
-        value: String
+        value: String,
+      },
+      inputClass: {
+        value: String,
+      },
+      collectCardHolderName: {
+        value: Boolean,
+      },
+      collectPostalCode: {
+        value: Boolean,
+      },
+      enableDataCollector: {
+        value: Boolean,
       }
     },
     created() {
@@ -47,11 +74,12 @@
         clientInstance: '',
         hostedFieldsInstance: '',
         tokenizePayload: '',
+        dataCollectorPayload: '',
       }
     },
     methods: {
       createBT () {
-        var client = require('braintree-web/client');
+        const client = require('braintree-web/client');
         client.create({
           authorization: this.authToken
         }, (clientErr, clientInstance) => {
@@ -62,11 +90,15 @@
           } else {
             this.clientInstance = clientInstance
             this.createHF();
+
+            if (this.enableDataCollector) {
+              this.dataCollectorCreate();
+            }
           }
         });
       },
       createHF () {
-        var hostedFields = require('braintree-web/hosted-fields');
+        const hostedFields = require('braintree-web/hosted-fields');
         hostedFields.create({
           client: this.clientInstance,
           styles: {
@@ -83,17 +115,17 @@
           fields: {
             number: {
               selector: '#number',
-              placeholder: '4111 1111 1111 1111'
+              placeholder: '4111 1111 1111 1111',
             },
             cvv: {
               selector: '#cvv',
-              placeholder: '123'
+              placeholder: '123',
             },
             expirationDate: {
               selector: '#expiration-date',
-              placeholder: '10/2019'
-            }
-          }
+              placeholder: '10/2019',
+            },
+          },
         }, (hostedFieldsErr, hostedFieldsInstance) => {
           if (hostedFieldsErr) {
             // Handle error in Hosted Fields creation
@@ -108,16 +140,29 @@
         });
       },
       tokenizeHF () {
-        this.hostedFieldsInstance.tokenize( (tokenizeErr, payload) => {
+        const additionalFields = {
+          cardholderName: '',
+          billingAddress: {
+            postalCode: '',
+          },
+        };
+        if (this.collectCardHolderName) {
+          additionalFields.cardholderName = document.querySelector('#cardholder').value;
+        }
+        if (this.collectPostalCode) {
+          additionalFields.billingAddress.postalCode = document.querySelector('#postal').value;
+        }
+        console.log(additionalFields);
+        this.hostedFieldsInstance.tokenize(additionalFields, (tokenizeErr, payload) => {
           if (tokenizeErr) {
             this.errorMessage = 'There was an error tokenizing! Message: ' + tokenizeErr.message;
             this.$emit('bthferror', this.errorMessage);
             return;
-          } else {
-            this.tokenizePayload = payload;
-            this.$emit('bthfpayload', payload);
-            this.teardownHF();
           }
+
+          this.tokenizePayload = payload;
+          this.$emit('bthfpayload', payload);
+          this.teardownHF();
 
         });
       },
@@ -132,9 +177,74 @@
               return;
             }
         });
+      },
+      dataCollectorCreate() {
+        const dataCollector = require('braintree-web/data-collector');
+        dataCollector.create({
+          client: this.clientInstance,
+          kount: true,
+        }, (dataCollectorErr, dataCollectorInstance) => {
+          if (dataCollectorErr) {
+            this.errorMessage = 'There was an error setting up the data collector! Message: ' + dataCollectorErr.message;
+            this.$emit('bthferror', this.dataCollectorErr);
+            return;
+          }
+
+          this.$emit('device.data.payload', dataCollectorInstance.deviceData);
+          this.dataCollectorPayload = dataCollectorInstance;
+
+        });
 
       }
+    },
+  };
+</script>
 
+<style>
+  .loader{
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    position: relative;
+    margin: 0 auto;
+  }
+
+  /* LOADER 1 */
+
+  #loader-1:before, #loader-1:after{
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    border: 10px solid transparent;
+    border-top-color: #3498db;
+  }
+
+  #loader-1:before{
+    z-index: 100;
+    animation: spin 1s infinite;
+  }
+
+  #loader-1:after{
+    border: 10px solid #ccc;
+  }
+
+  @keyframes spin{
+    0%{
+      -webkit-transform: rotate(0deg);
+      -ms-transform: rotate(0deg);
+      -o-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+
+    100%{
+      -webkit-transform: rotate(360deg);
+      -ms-transform: rotate(360deg);
+      -o-transform: rotate(360deg);
+      transform: rotate(360deg);
     }
   }
-</script>
+</style>
