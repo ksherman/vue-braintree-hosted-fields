@@ -16,6 +16,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "braintree-web": "^3.11.0"
+    "braintree-web": "^3.22.0"
   }
 }
