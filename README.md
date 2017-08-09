@@ -22,6 +22,9 @@ Published on NPM. Includes `braintree-web` as a dependency.
     authToken="sandbox_c8xxxxxb_qxxxxxxxxxxxxxxj" // authToken, either Braintree Client Token or Static Tokenization Key
     v-on:bthferror="btHFError" // method that listenes for error message emited
     v-on:bthfpayload="btHFPayload" // method that listens for tokenization payload
+    :collectCardHolderName="false" // collect the cardholder name through the component for tokenization in the nonce
+    :collectPostalCode="false" // collect the postal code through the component for tokenization in the nonce
+    :enableDataCollector="false" // enables device data collection for Kount integration
 ></hosted-fields>
 ```
 
@@ -88,11 +91,15 @@ Using `label` and `.input-field`:
 <template>
   <div>
     <hosted-fields
-        wrapperClass="constrain"
-        authToken="sandbox_c8xxxxxb_qxxxxxxxxxxxxxxj"
-        v-on:bthferror="btHFError"
-        v-on:bthfpayload="btHFPayload"
-    ></hosted-fields>
+      wrapperClass="constrain"
+      :authToken="sandbox_c8xxxxxb_qxxxxxxxxxxxxxxj"
+      v-on:bthferror="btHFError"
+      v-on:bthfpayload="btHFPayload"
+      :collectCardHolderName="true"
+      :collectPostalCode="false"
+      :enableDataCollector="true"
+    >
+    </hosted-fields>
 
     <button @click="submitTransaction">Submit</button>
   </div>
